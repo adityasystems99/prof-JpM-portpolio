@@ -1,151 +1,65 @@
-# Professor Jyotiprakash Mishra — Immersive 3D Research Portfolio
-### 3D Cosmic WebGL · 22-Card Rolodex Ring · Research Terminal · Academic CV
+# Professor Jyotiprakash Mishra — Immersive 3D Digital Experience
+### Three.js WebGL · GLSL Iridescent Shaders · GSAP ScrollTrigger · Particle-Cloak Intro · Interactive 3D Lab
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![WebGL: Three.js](https://img.shields.io/badge/WebGL-Three.js-green.svg)](https://threejs.org)
-[![Animation: GSAP](https://img.shields.io/badge/Animation-GSAP%20ScrollTrigger-brightgreen.svg)](https://greensock.com/gsap/)
-[![RISC--V: Hardware%20Security](https://img.shields.io/badge/Architecture-RISC--V%20Hardware%20Security-emerald)](https://jyotiprakash.org)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
+[![WebGL: Three.js](https://img.shields.io/badge/WebGL-Three.js%20r128-green.svg)](https://threejs.org)
+[![Animation: GSAP](https://img.shields.io/badge/Animation-GSAP%203%20%2B%20ScrollTrigger-brightgreen.svg)](https://greensock.com/gsap/)
+[![Architecture: RISC--V](https://img.shields.io/badge/Security-RISC--V%20Hardware%20Defense-emerald)](https://jyotiprakash.org)
 
-An award-winning interactive 3D research portfolio and cybernetic systems laboratory commemorating the academic, industrial, and teaching contributions of **Professor Jyotiprakash Mishra** — Senior Assistant Professor of Computer Science at KIIT, PhD Candidate in Computer Science at BITS Pilani (thesis submitted), and Co-founder/CEO of ENineHQ Technologies.
-
----
-
-## 🚀 Dual Immersive Experiences
-
-| Experience | Entry File | Description & Highlights |
-|---|---|---|
-| **🌌 Cosmic Luxury 3D Landing Page** | [`landing.html`](landing.html) | **Awwwards-level cinematic experience**: 1,800 iridescent floating Three.js particles, interactive rotating 3D Torus-Knot geometry, GSAP ScrollTrigger anti-gravity window physics, 3D card tilt on hover, glassmorphism UI, and Tailwind styling. |
-| **⚡ Cyber-Terminal & 22-Card 3D Lab** | [`index.html`](index.html) | **Complete research laboratory & CV**: 22-Card Rolodex Ring in 3D space with inertia, hardware-accurate RISC-V Zicbom cache coherency simulator, UNIX terminal emulator, 7 matrix theme modes, and one-click printable academic CV. |
+An award-winning, experimental, cinematic academic digital experience commemorating the contributions of **Professor Jyotiprakash Mishra** — Assistant Professor of Computer Science at KIIT, PhD Candidate at BITS Pilani (thesis submitted), and Co-founder/CEO of ENineHQ Technologies.
 
 ---
 
-## 🌟 Key Features
+## 🌟 The Experience Architecture
 
-### 1. Central 22-Card Rolodex Ring (`rolodex_ring.js`)
-- **Mathematical Ring Geometry:**
-  - $N = 22$ cards representing verified research, publications, books, patents, tools, and career highlights.
-  - Radius: $R = 0.62 \times \min(\text{stage width}, \text{stage height})$.
-  - Angle per frame: $a = \text{rotation} + (i / N) \times 2\pi$.
-  - 3D Coordinates:
-    $$x = \sin(a) \times R$$
-    $$z = \cos(a) \times R$$
-    $$y = -\cos(a) \times R \times 0.42$$
-  - Depth-aware parameters:
-    $$\text{depth} = \frac{z / R + 1}{2}$$
-    $$\text{scale} = 0.55 + \text{depth} \times 0.55$$
-    $$\text{opacity} = 0.30 + \text{depth} \times 0.70$$
-    $$\text{brightness} = 0.5 + \text{depth} \times 0.7$$
-    $$\text{cardRotation} = \sin(a) \times 14^\circ$$
-  - Transform order: `translate(-50%, -50%) translate3d(x, y, 0) rotate(cardRotation deg) scale(scale)`
-- **True Depth Sorting:** Array sorted by $z$ ascending each frame; sorted index assigned as `z-index`.
-- **Drag & Momentum:** Pointer capture with horizontal delta tracking, idle drift of `0.0045`, and smooth decay:
-  $$\text{vel} \leftarrow \text{vel} + (0.0045 - \text{vel}) \times 0.02$$
+### 1. Particle-Cloak Intro (`particle_cloak.js`)
+- **Full-Screen Living Particle Veil:** High-density Canvas 2D particle simulation with spring dynamics and autonomous Lissajous drift.
+- **Pointer Repulsion Physics:** Mouse and touch movement parts the particles to reveal the introduction underneath.
+- **Explosive Dissolve Transition:** Clicking **"Enter Portfolio ↗"** triggers an outward radial particle dispersal that transitions into the 3D portfolio.
 
-### 2. Immersive Three.js WebGL Cosmic Background (`cosmic_bg.js`)
-- Full-screen WebGL scene with deep space ambiance, floating iridescent dust particles, glowing point lights, and an abstract 3D wireframe cyber-core.
-- Interactive mouse-responsive parallax with smooth interpolation.
-- Full theme synchronization across all 7 themes.
-- Automatic pause when tab is hidden and strict compliance with `prefers-reduced-motion`.
+### 2. Central Procedural Organic Spine Sculpture (`spine_sculpture.js`)
+- **Twisting Iridescent Crystal Vortex:** Multi-layered Catmull-Rom tubular geometry rendered with custom GLSL vertex and fragment shaders.
+- **Spectrum Iridescence:** View-dependent dynamic color shifts across electric cyan (`#48E8F5`), turquoise (`#38DCCB`), cobalt (`#477BFF`), ultraviolet (`#9865FF`), hot pink (`#FF39C8`), fuchsia (`#FF63B5`), and warm gold (`#FFD38B`).
+- **Orbiting Helical Filaments:** Pulsing golden and cyan energy helix ribbons spiraling along the spine.
+- **Wet Reflective Obsidian Floor:** Dark glossy floor plane at the base that dynamically reflects the colored light with organic wave ripples.
+- **Rising 3D Embers:** Ascending cyber-dust and sparkling particles with additive blending.
 
-### 3. Scroll-Driven 3D Window Transitions (`scroll_experience.js`)
-- GSAP & ScrollTrigger multi-section experience with rotating 3D panels and staggered reveals:
-  - **Hero & Rolodex Ring**
-  - **Research & Formal Methods (BITS Pilani Thesis)**
-  - **Publications Highlights (23 Peer-Reviewed Papers)**
-  - **Teaching Tools & Systems Simulators (8 Free Laboratories)**
-  - **Books & Intellectual Property (2 De Gruyter Textbooks, 6 Patents)**
-  - **Career Timeline & Education (16 Years Across KIIT, Epic Systems, Oracle, BITS Pilani, UW-Madison)**
+### 3. Spatial Glass Constellation (`index.html`)
+Inspired by modern 3D spatial interfaces ("Knowledge for a Better Tomorrow"):
+- **Editorial Introduction:** Typography featuring Cinzel, Cormorant Garamond, Inter, and JetBrains Mono.
+- **Six Floating Spatial Portals:**
+  1. **`01 RESEARCH`** — Side-channel security on RISC-V processors, BITS Pilani PhD thesis.
+  2. **`02 PUBLICATIONS`** — Peer-reviewed papers across IEEE, Springer, and ELSEVIER.
+  3. **`03 BOOKS & PATENTS`** — Textbooks with De Gruyter Brill and patented hardware security innovations.
+  4. **`04 TEACHING & RESOURCES`** — Open-access systems simulators and educational tools.
+  5. **`05 ACADEMIC TIMELINE`** — 16-year career timeline across Oracle, Epic Systems, KIIT, and ENineHQ.
+  6. **`06 3D LABORATORY`** — Live interactive microarchitectural simulation studio.
 
-### 4. Interactive Research Simulations (`cache_sim.js`)
-- Hardware-accurate simulation of **Software-Managed Cache Coherency (Zicbom) & DMA Bypass** (*SmartCom LNNS 2026*):
-  - RV64G CPU Core, Zicbom Cache Line, Physical DRAM, DMA Peripheral, and Promela/Spin Monitor.
-  - Operations: `CPU Read`, `CPU Write (Dirty)`, `CBO.CLEAN`, `CBO.INVAL`, `CBO.FLUSH`, `DMA Read`, `DMA Write`.
-  - Proves how Zicbom instructions safely eliminate **58.8% of redundant CMOs** without data staleness.
+### 4. Interactive 3D Simulation Studio (`cache_sim.js`)
+- Hardware-accurate simulation of **Software-Managed Cache Coherency (CMO) & DMA Hazard Bypass** based on published research (*SmartCom LNNS 2026*).
+- Live step-by-step state machine illustrating how Zicbom instructions prevent data corruption and eliminate redundant cache maintenance operations.
 
-### 5. Nine Primary Academic Categories
-1. **Patents** — Hardware monitors & silicon IP (6 published patent applications)
-2. **Publications** — 23 peer-reviewed journal and conference publications
-3. **Teaching Tools** — 8 browser systems simulators (`xv6`, `8086`, `netsim`, `compy`, `baysik`, `lohgo`, `see`, `strux`)
-4. **Research** — RISC-V hardware security, microarchitectural side-channels, BITS Pilani thesis
-5. **Books** — 2 published textbooks with De Gruyter Brill
-6. **Experience** — 16 years of leadership across KIIT, Epic Systems (USA), Oracle, ENineHQ
-7. **Education** — BITS Pilani (PhD, BE Hons with 9.53 CGPA), University of Wisconsin-Madison (MS in CS with 3.9/4.0 GPA)
-8. **Teaching** — Courses in computer architecture, operating systems, 78+ lecture videos, 250+ articles
-9. **Contact** — Academic email (`mail@jyotiprakash.org`), Google Scholar, GitHub, LinkedIn
-
-### 6. Seven Coordinated Themes
-Switch anytime with keys <kbd>1</kbd>–<kbd>7</kbd> or navigation buttons:
-- `Matrix` (#39ff7a green terminal)
-- `Amber CRT` (#ffb000 retro monochrome)
-- `Neon` (#ff2bd6 / #00f0ff synthwave)
-- `Ice` (#4cc3ff deep cold blue)
-- `Red team` (#ff3b3b offensive security red)
-- `Ghost` (#ececec clean stealth dark)
-- `Paper` (#0b6e4f editorial daylight print)
-
-### 7. Complete CV & Clean Print Mode
-- Access via `#cv` or top navigation.
-- Dedicated `@media print` layout stripping out all 3D canvas and decorative animations to produce a clean, multi-page, publication-grade academic CV formatted for browser **Print** and **Save as PDF**.
+### 5. Sliding Glass Drawer & Research Terminal (`app_logic_full.js`)
+- **Sliding Glass Drawer Modal (`#sheet`):** In-depth modal views for all publications, thesis chapters, course tools, and printable CV.
+- **Interactive Terminal Console (`#term`):** UNIX-style command-line environment accessible via hotkey (<kbd>`</kbd> or <kbd>~</kbd>) or navigation button.
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Running Locally
 
-### 1. Prerequisites
-- Node.js (v18+) or any static HTTP web server.
-
-### 2. Local Execution
 ```bash
 # Clone the repository
 git clone https://github.com/adityasystems99/prof-JpM-portpolio.git
 cd prof-JpM-portpolio
 
-# Run verification test suite
-npm test
-
-# Start local server
-npm start
+# Start any local HTTP server
+npx -y http-server . -p 8888 -c-1 --cors
 ```
 
-Visit **`http://localhost:3000`** in your browser.
+Open `http://localhost:8888/` in any modern web browser with WebGL support.
 
 ---
 
-## 🗄️ Database Architecture (Supabase / PostgreSQL)
+## 📄 License
 
-A complete, normalized schema is provided in [`supabase/schema.sql`](supabase/schema.sql) with strict Row Level Security (RLS) policies:
-- `profiles` — Biographical metadata and credentials
-- `papers` — 23 peer-reviewed journal and conference publications with DOI, abstracts, and citation metadata
-- `patents` — 6 published patent applications
-- `books` — Published textbooks with De Gruyter Brill
-- `tools` — Interactive educational simulators and software repositories
-- `experiences` — Chronological industry and faculty appointments
-- `education` — Verified academic degrees (BITS Pilani, UW-Madison)
-- `contact_inquiries` — Public write-only message dispatch
-
----
-
-## 🌐 Deployment
-
-### Vercel (1-Click Deployment)
-The project includes [`vercel.json`](vercel.json) pre-configured with security headers and clean URL routing:
-```bash
-npx vercel
-```
-
-### Static Hosting (GitHub Pages / Cloudflare Pages)
-This repository is 100% portable and static. Point any static hosting service to the repository root directory.
-
----
-
-## 📄 Provenance & Academic Integrity
-All research claims, paper titles, DOIs, patent applications, degrees, and employment timelines are verified against Professor Jyotiprakash Mishra's official scholarly records.
-
-- **Google Scholar:** [citations?user=sE2dRWIAAAAJ](https://scholar.google.com/citations?user=sE2dRWIAAAAJ)
-- **GitHub:** [@ShowMeTheStack](https://github.com/ShowMeTheStack)
-- **LinkedIn:** [in/mishrajp88](https://linkedin.com/in/mishrajp88/)
-- **Blog:** [blog.jyotiprakash.org](https://blog.jyotiprakash.org/)
-
----
-*Built with precision and respect for Professor Jyotiprakash Mishra.*
+Copyright (C) 2026 Jyotiprakash Mishra. Released under the [MIT License](LICENSE).
