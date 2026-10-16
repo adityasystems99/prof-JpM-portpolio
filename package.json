@@ -1,0 +1,24 @@
+{
+  "name": "prof-jpm-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Professor Jyotiprakash Mishra — Immersive 3D Research Portfolio, Systems Terminal & Academic CV",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node -e \"console.log('Validating structure...'); require('fs').accessSync('index.html'); console.log('index.html OK'); require('fs').accessSync('data/site_data.json'); console.log('site_data.json OK'); require('fs').accessSync('assets/photo.jpg'); console.log('photo.jpg OK'); require('fs').accessSync('gallery3d.js'); console.log('gallery3d.js OK'); require('fs').accessSync('cache_sim.js'); console.log('cache_sim.js OK'); console.log('All tests passed!');\""
+  },
+  "keywords": [
+    "threejs",
+    "webgl",
+    "risc-v",
+    "hardware-security",
+    "research-portfolio",
+    "academic-cv",
+    "cache-coherency",
+    "terminal"
+  ],
+  "author": "Jyotiprakash Mishra",
+  "license": "UNLICENSED"
+}

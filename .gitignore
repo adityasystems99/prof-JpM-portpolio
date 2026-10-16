@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Testing and Environment
+.env
+.env.local
+.env.*.local
+*.log
+npm-debug.log*
+
+# IDE and OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Build and Temp
+dist/
+build/
+scratch/
