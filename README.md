@@ -11,6 +11,15 @@ An award-winning interactive 3D research portfolio and cybernetic systems labora
 
 ---
 
+## 🚀 Dual Immersive Experiences
+
+| Experience | Entry File | Description & Highlights |
+|---|---|---|
+| **🌌 Cosmic Luxury 3D Landing Page** | [`landing.html`](landing.html) | **Awwwards-level cinematic experience**: 1,800 iridescent floating Three.js particles, interactive rotating 3D Torus-Knot geometry, GSAP ScrollTrigger anti-gravity window physics, 3D card tilt on hover, glassmorphism UI, and Tailwind styling. |
+| **⚡ Cyber-Terminal & 22-Card 3D Lab** | [`index.html`](index.html) | **Complete research laboratory & CV**: 22-Card Rolodex Ring in 3D space with inertia, hardware-accurate RISC-V Zicbom cache coherency simulator, UNIX terminal emulator, 7 matrix theme modes, and one-click printable academic CV. |
+
+---
+
 ## 🌟 Key Features
 
 ### 1. Central 22-Card Rolodex Ring (`rolodex_ring.js`)
