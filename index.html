@@ -22,7 +22,7 @@
 <!-- Google Fonts: JetBrains Mono -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <!-- Pinned CDN Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -498,13 +498,230 @@ main#main {
   .lab-hero-stage { min-height: 90vh; }
   .full-rolodex-stage { height: 480px; }
 }
+/* ── Particle-Cloak Academic Intro Veil Styling ── */
+body.cloak-active {
+  overflow: hidden !important;
+}
+
+#particle-cloak-intro {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: #080D18;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#particle-cloak-intro.intro-fade-out {
+  opacity: 0;
+  transform: scale(1.02);
+  pointer-events: none;
+}
+
+#particle-cloak-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+  display: block;
+}
+
+.cloak-content {
+  position: relative;
+  z-index: 5;
+  max-width: 860px;
+  width: 92%;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 32px 20px;
+  pointer-events: auto;
+}
+
+.cloak-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(10px, 1.1vw, 12px);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #73D9F5;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 18px;
+  border-radius: 999px;
+  background: rgba(115, 217, 245, 0.06);
+  border: 1px solid rgba(115, 217, 245, 0.22);
+  box-shadow: 0 0 20px rgba(115, 217, 245, 0.08);
+}
+
+.cloak-eyebrow-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #73D9F5;
+  box-shadow: 0 0 8px #73D9F5;
+}
+
+.cloak-name {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(13px, 1.6vw, 17px);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #A0A9BC;
+}
+
+.cloak-headline {
+  font-family: 'Cormorant Garamond', 'Cinzel', Georgia, serif;
+  font-size: clamp(34px, 5.8vw, 68px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: #F3F0E8;
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.7);
+  margin: 4px 0;
+}
+
+.cloak-caption {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(13px, 1.4vw, 16px);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #73D9F5;
+}
+
+.cloak-supporting {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(14px, 1.5vw, 17px);
+  font-weight: 400;
+  line-height: 1.6;
+  color: #A0A9BC;
+  max-width: 520px;
+}
+
+.cloak-btn-wrap {
+  position: relative;
+  z-index: 25;
+  margin-top: 14px;
+  pointer-events: auto;
+}
+
+.cloak-enter-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 40px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #080D18;
+  background: linear-gradient(135deg, #F3F0E8 0%, #D8D4C8 100%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.5), 0 0 28px rgba(115, 217, 245, 0.25);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.cloak-enter-btn:hover, .cloak-enter-btn:focus-visible {
+  background: #73D9F5;
+  color: #080D18;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.6), 0 0 40px rgba(115, 217, 245, 0.6);
+  border-color: #73D9F5;
+}
+
+.cloak-enter-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.cloak-btn-arrow {
+  font-size: 1.15em;
+  transition: transform 0.25s ease;
+}
+
+.cloak-enter-btn:hover .cloak-btn-arrow {
+  transform: translate(3px, -3px);
+}
+
+.cloak-corner-badge {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(160, 169, 188, 0.4);
+  letter-spacing: 0.1em;
+  pointer-events: none;
+  z-index: 5;
+}
+.cloak-corner-tl { top: 28px; left: 32px; }
+.cloak-corner-tr { top: 28px; right: 32px; }
+.cloak-corner-bl { bottom: 28px; left: 32px; }
+.cloak-corner-br { bottom: 28px; right: 32px; }
+
+@media (max-width: 640px) {
+  .cloak-corner-badge { display: none; }
+  .cloak-content { gap: 16px; padding: 20px 16px; }
+  .cloak-enter-btn { padding: 14px 30px; font-size: 14px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  * { animation: none !important; transition: none !important; }
+  #particle-cloak-canvas { display: none !important; }
+  #particle-cloak-intro { transition: none !important; }
+  .cloak-enter-btn { transition: none !important; }
 }
 </style>
 </head>
 
 <body>
+<!-- =========================================================================
+     PARTICLE-CLOAK ACADEMIC INTRO VEIL (Canvas 2D + Spring Dynamics)
+     ========================================================================= -->
+<aside id="particle-cloak-intro" aria-label="An Academic Portrait — Particle Cloak Intro">
+  <div class="cloak-corner-badge cloak-corner-tl">[ SYS.INIT // ARCHIVE v2.6 ]</div>
+  <div class="cloak-corner-badge cloak-corner-tr">KIIT · BITS PILANI</div>
+  <div class="cloak-corner-badge cloak-corner-bl">HARDWARE SECURITY & FORMAL METHODS</div>
+  <div class="cloak-corner-badge cloak-corner-br">EST. 2026 // RISC-V SILICON</div>
+
+  <div class="cloak-content">
+    <div class="cloak-eyebrow">
+      <span class="cloak-eyebrow-dot"></span>
+      AN ACADEMIC PORTRAIT
+    </div>
+    <div class="cloak-name">Professor Jyotiprakash Mishra</div>
+    <h1 class="cloak-headline">A life devoted to knowledge.</h1>
+    <div class="cloak-caption">Teaching · Research · Inspiration</div>
+    <p class="cloak-supporting">Discover the journey behind the educator.</p>
+    <div class="cloak-btn-wrap">
+      <button id="cloakEnterBtn" class="cloak-enter-btn" type="button" aria-label="Enter Portfolio">
+        <span>Enter Portfolio</span>
+        <span class="cloak-btn-arrow">↗</span>
+      </button>
+    </div>
+  </div>
+
+  <canvas id="particle-cloak-canvas" aria-hidden="true"></canvas>
+</aside>
+
 <canvas id="cosmic-canvas" aria-hidden="true"></canvas>
 <canvas id="rain" aria-hidden="true"></canvas>
 <div id="crt" aria-hidden="true"></div>
@@ -528,6 +745,7 @@ main#main {
         <button data-cat="contact" class="nav-link">Contact</button>
       </nav>
       <div class="nav-actions">
+        <button id="navReplayIntro" class="action-btn" title="Replay Particle Veil Intro">Intro</button>
         <button id="navPrintCv" class="action-btn">Print CV</button>
         <button id="navOpenTerm" class="action-btn">Terminal</button>
         <a href="mailto:mail@jyotiprakash.org" class="touch-btn">Get in Touch</a>
@@ -4594,6 +4812,7 @@ window.SITE = {
 
 
 </script>
+<script src="particle_cloak.js"></script>
 <noscript><div style="padding:24px;font:16px monospace;color:#39ff7a;background:#030b06">Jyotiprakash Mishra. Hardware security on RISC-V, teaching tools, papers, patents and books. This page needs JavaScript to show the details. Contact: mail@jyotiprakash.org</div></noscript>
 </body>
 </html>

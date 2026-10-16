@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "node -e \"console.log('Validating structure...'); const fs = require('fs'); const files = ['index.html', 'data/site_data.json', 'assets/photo.jpg', 'rolodex_ring.js', 'cosmic_bg.js', 'cache_sim.js', 'scroll_experience.js', 'supabase/schema.sql', 'server.js']; files.forEach(f => { fs.accessSync(f); console.log('  ' + f + ' OK'); }); console.log('All tests passed successfully!');\""
+    "test": "node -e \"console.log('Validating structure...'); const fs = require('fs'); const files = ['index.html', 'particle_cloak.js', 'data/site_data.json', 'assets/photo.jpg', 'rolodex_ring.js', 'cosmic_bg.js', 'cache_sim.js', 'scroll_experience.js', 'supabase/schema.sql', 'server.js']; files.forEach(f => { fs.accessSync(f); console.log('  ' + f + ' OK'); }); console.log('All tests passed successfully!');\""
   },
   "keywords": [
     "threejs",
