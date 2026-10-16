@@ -323,50 +323,50 @@
         card.setAttribute('aria-label', `${data.title} (${data.categoryLabel})`);
 
         card.style.position = 'absolute';
-        card.style.width = '280px';
-        card.style.height = '370px';
+        card.style.width = '290px';
+        card.style.height = '380px';
         card.style.left = '0px';
         card.style.top = '0px';
         card.style.cursor = 'pointer';
         card.style.transformOrigin = 'center center';
         card.style.willChange = 'transform, opacity, filter';
-        card.style.borderRadius = '16px';
-        card.style.padding = '18px 20px';
+        card.style.borderRadius = '20px';
+        card.style.padding = '22px 22px 18px';
         card.style.boxSizing = 'border-box';
-        card.style.border = '1px solid var(--line)';
-        card.style.background = 'var(--panel2)';
-        card.style.backdropFilter = 'blur(16px)';
-        card.style.webkitBackdropFilter = 'blur(16px)';
-        card.style.boxShadow = '0 18px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08)';
+        card.style.border = '1px solid rgba(255, 255, 255, 0.12)';
+        card.style.background = 'rgba(15, 18, 16, 0.82)';
+        card.style.backdropFilter = 'blur(20px) saturate(1.3)';
+        card.style.webkitBackdropFilter = 'blur(20px) saturate(1.3)';
+        card.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12)';
         card.style.display = 'flex';
         card.style.flexDirection = 'column';
         card.style.justifyContent = 'space-between';
-        card.style.transition = 'border-color 0.25s, box-shadow 0.25s';
+        card.style.transition = 'border-color 0.3s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s cubic-bezier(0.23, 1, 0.32, 1)';
 
         card.innerHTML = `
           <div>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-              <span style="font-family:var(--font);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;">${data.categoryLabel}</span>
-              <span style="font-family:var(--font);font-size:9.5px;color:var(--muted);border:1px solid var(--line);padding:1px 6px;border-radius:4px;">${data.badge}</span>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;">${data.categoryLabel}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);padding:2px 7px;border-radius:6px;">${data.badge}</span>
             </div>
-            <h3 style="margin:4px 0 6px;font-family:var(--font);font-size:16px;font-weight:800;color:var(--fg);line-height:1.25;letter-spacing:-0.01em;">${data.title}</h3>
-            <div style="font-family:var(--font);font-size:12px;color:var(--accent2);margin-bottom:10px;font-weight:600;">${data.subtitle}</div>
-            <p style="margin:0;font-family:var(--font);font-size:11.5px;color:var(--muted);line-height:1.45;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;">${data.desc}</p>
+            <h3 style="margin:4px 0 6px;font-family:'Inter',system-ui,sans-serif;font-size:16px;font-weight:700;color:#ffffff;line-height:1.3;letter-spacing:-0.01em;">${data.title}</h3>
+            <div style="font-family:'Inter',system-ui,sans-serif;font-size:12px;color:var(--accent2);margin-bottom:10px;font-weight:600;">${data.subtitle}</div>
+            <p style="margin:0;font-family:'Inter',system-ui,sans-serif;font-size:12px;color:#9ca3af;line-height:1.5;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;">${data.desc}</p>
           </div>
-          <div style="border-top:1px dashed var(--line);padding-top:10px;display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-family:var(--font);font-size:10.5px;color:var(--dim);">${data.primaryCategory}</span>
-            <span style="font-family:var(--font);font-size:11.5px;color:var(--accent);font-weight:bold;">EXPLORE ↵</span>
+          <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:12px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.05em;">${data.primaryCategory}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--accent);font-weight:700;display:inline-flex;align-items:center;gap:4px;">EXPLORE ↵</span>
           </div>
         `;
 
         // Card events
         card.addEventListener('mouseenter', () => {
-          card.style.borderColor = 'var(--accent)';
-          card.style.boxShadow = '0 20px 50px rgba(0,0,0,0.6), var(--glow)';
+          card.style.borderColor = 'rgba(57, 255, 122, 0.6)';
+          card.style.boxShadow = '0 28px 65px rgba(0,0,0,0.7), 0 0 25px rgba(57, 255, 122, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
         });
         card.addEventListener('mouseleave', () => {
-          card.style.borderColor = 'var(--line)';
-          card.style.boxShadow = '0 18px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08)';
+          card.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+          card.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12)';
         });
         card.addEventListener('click', (e) => {
           if (Math.abs(this.dragDeltaX) > 5) return; // Ignore if dragged

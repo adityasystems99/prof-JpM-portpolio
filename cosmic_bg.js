@@ -85,24 +85,28 @@
     }
 
     createCosmicDust() {
-      const particleCount = this.isReducedMotion ? 120 : 600;
+      const particleCount = this.isReducedMotion ? 200 : 1500;
       const geometry = new THREE.BufferGeometry();
       const positions = new Float32Array(particleCount * 3);
       const colors = new Float32Array(particleCount * 3);
 
-      const color1 = new THREE.Color(0x39ff7a);
-      const color2 = new THREE.Color(0x00f0ff);
-      const color3 = new THREE.Color(0xb4410f);
+      const palette = [
+        new THREE.Color(0x39ff7a), // emerald
+        new THREE.Color(0x00f0ff), // electric cyan
+        new THREE.Color(0xb48ad8), // amethyst violet
+        new THREE.Color(0x38bdf8), // sky blue
+        new THREE.Color(0xffffff)  // star white
+      ];
 
       for (let i = 0; i < particleCount; i++) {
-        positions[i * 3] = (Math.random() - 0.5) * 2400;
-        positions[i * 3 + 1] = (Math.random() - 0.5) * 1800;
-        positions[i * 3 + 2] = (Math.random() - 0.5) * 1600;
+        positions[i * 3] = (Math.random() - 0.5) * 2600;
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 2000;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 1800;
 
-        const mixedColor = Math.random() > 0.5 ? color1 : color2;
-        colors[i * 3] = mixedColor.r;
-        colors[i * 3 + 1] = mixedColor.g;
-        colors[i * 3 + 2] = mixedColor.b;
+        const col = palette[Math.floor(Math.random() * palette.length)];
+        colors[i * 3] = col.r;
+        colors[i * 3 + 1] = col.g;
+        colors[i * 3 + 2] = col.b;
       }
 
       geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -112,7 +116,7 @@
         size: 3.2,
         vertexColors: true,
         transparent: true,
-        opacity: 0.55,
+        opacity: 0.65,
         blending: THREE.AdditiveBlending
       });
 
