@@ -1,0 +1,1140 @@
+<!doctype html>
+<!--
+  Professor Jyotiprakash Mishra — Hyper-Premium Immersive Landing Page
+  Three.js Cosmic Particles + GSAP Anti-Gravity Scroll + Glassmorphic UI
+  Copyright (C) 2026 Jyotiprakash Mishra <mail@jyotiprakash.org>
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jyotiprakash Mishra — Immersive Research Portfolio</title>
+<meta name="description" content="Jyotiprakash Mishra: hardware security researcher, RISC-V specialist, Assistant Professor at KIIT, PhD candidate at BITS Pilani. An award-winning interactive 3D portfolio.">
+<meta name="author" content="Jyotiprakash Mishra">
+<meta name="theme-color" content="#050505">
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'Menlo', 'Consolas', 'monospace'],
+      },
+      colors: {
+        cosmic: {
+          50:  '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          300: '#86efac',
+          400: '#4ade80',
+          500: '#22c55e',
+          600: '#16a34a',
+          700: '#15803d',
+          800: '#166534',
+          900: '#14532d',
+          950: '#052e16',
+        },
+        void: '#050505',
+        deep: '#0a0a0a',
+        surface: '#111111',
+      },
+    },
+  },
+};
+</script>
+
+<!-- Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<!-- GSAP + ScrollTrigger -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+  /* ── Core Reset & Global ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: #050505;
+    color: #e8e8e8;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection { background: rgba(57, 255, 122, 0.35); color: #fff; }
+
+  /* ── Three.js Canvas ── */
+  #cosmicCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── Vignette Overlay ── */
+  .vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(5,5,5,0.85) 100%);
+  }
+
+  /* ── Noise Grain Layer ── */
+  .noise {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-size: 128px 128px;
+  }
+
+  /* ── Scroll Container ── */
+  #scrollContent {
+    position: relative;
+    z-index: 5;
+  }
+
+  /* ── Glassmorphic Card ── */
+  .glass {
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(24px) saturate(1.3);
+    -webkit-backdrop-filter: blur(24px) saturate(1.3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    box-shadow:
+      0 0 0 0.5px rgba(255,255,255,0.06) inset,
+      0 20px 60px -12px rgba(0,0,0,0.5),
+      0 0 80px rgba(57,255,122,0.03);
+    transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
+                box-shadow 0.45s cubic-bezier(0.23, 1, 0.32, 1),
+                border-color 0.45s;
+  }
+  .glass:hover {
+    border-color: rgba(57,255,122,0.2);
+    box-shadow:
+      0 0 0 0.5px rgba(255,255,255,0.1) inset,
+      0 30px 80px -12px rgba(0,0,0,0.6),
+      0 0 120px rgba(57,255,122,0.06);
+    transform: translateY(-4px) scale(1.005);
+  }
+
+  /* ── Glow Accent Bar ── */
+  .glow-bar {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #39ff7a, #00f0ff, #b48ad8, transparent);
+    border-radius: 2px;
+    opacity: 0.6;
+  }
+
+  /* ── Animated gradient text ── */
+  .gradient-text {
+    background: linear-gradient(135deg, #39ff7a 0%, #00f0ff 40%, #b48ad8 70%, #ff2bd6 100%);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shiftGradient 8s ease infinite;
+  }
+  @keyframes shiftGradient {
+    0%, 100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+  }
+
+  /* ── Floating Badge ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(57,255,122,0.2);
+    background: rgba(57,255,122,0.06);
+    color: #39ff7a;
+  }
+  .badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #39ff7a;
+    box-shadow: 0 0 8px #39ff7a;
+    animation: pulse 2s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  /* ── Stat Counter ── */
+  .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(180deg, #ffffff 30%, #39ff7a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Custom Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(57,255,122,0.2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(57,255,122,0.4); }
+
+  /* ── Section Reveal ── */
+  .reveal-section {
+    opacity: 0;
+    transform: translateY(80px);
+  }
+
+  /* ── Card 3D tilt container ── */
+  .tilt-card {
+    perspective: 1200px;
+  }
+  .tilt-card-inner {
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  /* ── Floating Orb ── */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.12;
+    pointer-events: none;
+  }
+
+  /* ── Timeline Line ── */
+  .timeline-line {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, transparent, rgba(57,255,122,0.3) 20%, rgba(0,240,255,0.3) 80%, transparent);
+    transform: translateX(-50%);
+  }
+
+  /* ── Hero typing cursor ── */
+  .typing-cursor::after {
+    content: '▌';
+    color: #39ff7a;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  /* ── Link Underline Animation ── */
+  .link-hover {
+    position: relative;
+    text-decoration: none;
+  }
+  .link-hover::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -2px;
+    width: 0; height: 1px;
+    background: #39ff7a;
+    transition: width 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .link-hover:hover::after { width: 100%; }
+
+  /* ── Print: hide everything fancy ── */
+  @media print {
+    #cosmicCanvas, .vignette, .noise, .orb { display: none !important; }
+    body { background: #fff !important; color: #000 !important; }
+    .glass { background: #fff !important; border-color: #ccc !important; box-shadow: none !important; backdrop-filter: none !important; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+
+<body class="antialiased">
+
+<!-- ═══════ Three.js Cosmic Canvas ═══════ -->
+<canvas id="cosmicCanvas" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div class="noise" aria-hidden="true"></div>
+
+<!-- ═══════ Main Scroll Content ═══════ -->
+<div id="scrollContent">
+
+  <!-- ───── Navigation ───── -->
+  <nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500" style="background: transparent;">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center font-mono font-extrabold text-xs text-black shadow-lg shadow-emerald-500/20">
+          JM
+        </div>
+        <span class="font-mono text-xs text-gray-500 hidden sm:inline tracking-wider">JYOTIPRAKASH.ORG</span>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="#research" class="link-hover text-sm text-gray-400 hover:text-white transition-colors hidden md:block">Research</a>
+        <a href="#publications" class="link-hover text-sm text-gray-400 hover:text-white transition-colors hidden md:block">Publications</a>
+        <a href="#experience" class="link-hover text-sm text-gray-400 hover:text-white transition-colors hidden md:block">Experience</a>
+        <a href="#contact" class="link-hover text-sm text-gray-400 hover:text-white transition-colors hidden md:block">Contact</a>
+        <a href="mailto:mail@jyotiprakash.org" class="px-4 py-2 rounded-full text-xs font-semibold bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-emerald-400/30 transition-all duration-300">
+          Get in Touch
+        </a>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ═══════════════════════════════════ -->
+  <!--              HERO SECTION           -->
+  <!-- ═══════════════════════════════════ -->
+  <section id="hero" class="relative min-h-screen flex items-center justify-center px-6">
+    <!-- Decorative Orbs -->
+    <div class="orb w-[600px] h-[600px] bg-emerald-500 -top-40 -left-40"></div>
+    <div class="orb w-[500px] h-[500px] bg-cyan-500 -bottom-40 -right-40"></div>
+    <div class="orb w-[400px] h-[400px] bg-purple-600 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+
+    <div class="max-w-5xl mx-auto text-center relative">
+      <div class="badge mb-8 mx-auto" id="heroBadge">
+        Assistant Professor · KIIT University
+      </div>
+
+      <h1 id="heroTitle" class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.9] mb-8">
+        <span class="block text-white">Jyotiprakash</span>
+        <span class="block gradient-text mt-2">Mishra</span>
+      </h1>
+
+      <p id="heroSub" class="max-w-2xl mx-auto text-lg md:text-xl text-gray-400 leading-relaxed mb-6">
+        Hardware security researcher on
+        <span class="text-white font-medium">open RISC-V processors</span>.
+        PhD candidate at <span class="text-white font-medium">BITS Pilani</span>.
+        I build the tools I wish I had as a student.
+      </p>
+
+      <div id="heroTerminal" class="max-w-lg mx-auto glass rounded-2xl p-4 mb-12 text-left font-mono text-sm">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="w-3 h-3 rounded-full bg-red-500/60"></span>
+          <span class="w-3 h-3 rounded-full bg-yellow-500/60"></span>
+          <span class="w-3 h-3 rounded-full bg-green-500/60"></span>
+          <span class="text-xs text-gray-600 ml-2">guest@jyotiprakash.org:~$</span>
+        </div>
+        <div class="text-gray-500">
+          <span class="text-emerald-400">$</span> whoami<br>
+          <span class="text-gray-300">Jyotiprakash Mishra — Computer Scientist</span><br>
+          <span class="text-emerald-400">$</span> cat research.focus<br>
+          <span class="text-gray-300">Side-channel security of open-source RISC-V processors</span><br>
+          <span class="text-emerald-400">$</span> echo $YEARS_EXPERIENCE<br>
+          <span class="text-gray-300">16 (Oracle → Epic Systems → KIIT → ENineHQ)</span><br>
+          <span class="text-emerald-400">$</span> <span class="typing-cursor"></span>
+        </div>
+      </div>
+
+      <div class="glow-bar max-w-xs mx-auto mb-12"></div>
+
+      <!-- Stats Row -->
+      <div id="statsRow" class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+        <div class="text-center">
+          <div class="stat-num" data-count="23">0</div>
+          <div class="text-xs text-gray-500 mt-2 font-medium tracking-wider uppercase">Papers</div>
+        </div>
+        <div class="text-center">
+          <div class="stat-num" data-count="6">0</div>
+          <div class="text-xs text-gray-500 mt-2 font-medium tracking-wider uppercase">Patents</div>
+        </div>
+        <div class="text-center">
+          <div class="stat-num" data-count="2">0</div>
+          <div class="text-xs text-gray-500 mt-2 font-medium tracking-wider uppercase">Books</div>
+        </div>
+        <div class="text-center">
+          <div class="stat-num" data-count="16">0</div>
+          <div class="text-xs text-gray-500 mt-2 font-medium tracking-wider uppercase">Years</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-600 text-xs tracking-widest uppercase">
+      <span>Scroll</span>
+      <div class="w-px h-8 bg-gradient-to-b from-emerald-400/50 to-transparent animate-bounce"></div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════ -->
+  <!--          RESEARCH SECTION           -->
+  <!-- ═══════════════════════════════════ -->
+  <section id="research" class="relative py-32 md:py-48 px-6">
+    <div class="orb w-[500px] h-[500px] bg-emerald-600 top-0 right-0"></div>
+    <div class="max-w-7xl mx-auto">
+      <div class="reveal-section mb-20">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-2 h-2 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/50"></div>
+          <span class="font-mono text-xs text-emerald-400 tracking-widest uppercase">Research Focus</span>
+        </div>
+        <h2 class="text-4xl md:text-6xl font-black text-white leading-tight">
+          Breaking <span class="gradient-text">&</span> Fixing<br>
+          <span class="text-gray-500">RISC-V Processors</span>
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- Research Card 1 -->
+        <div class="reveal-section tilt-card">
+          <div class="tilt-card-inner glass p-8 md:p-10">
+            <div class="flex items-start justify-between mb-6">
+              <span class="badge">PACE · Chips 2026</span>
+              <span class="text-xs text-gray-600 font-mono">Chapter 5</span>
+            </div>
+            <h3 class="text-xl md:text-2xl font-bold text-white mb-4 leading-snug">
+              Page-Adaptive, Cache-Anchored Memory Encryption for RISC-V
+            </h3>
+            <p class="text-sm text-gray-400 leading-relaxed mb-6">
+              An open RISC-V memory encryption engine whose masked key core is formally proven DPA resistant. Precomputing the keystream during cache residency cuts eviction latency from 90 to 10 cycles — a 9× improvement.
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2 py-1 rounded-md text-[10px] font-mono bg-white/5 text-gray-500 border border-white/5">memory encryption</span>
+              <span class="px-2 py-1 rounded-md text-[10px] font-mono bg-white/5 text-gray-500 border border-white/5">DPA resistance</span>
+              <span class="px-2 py-1 rounded-md text-[10px] font-mono bg-white/5 text-gray-500 border border-white/5">Ascon</span>
+              <span class="px-2 py-1 rounded-md text-[10px] font-mono bg-white/5 text-gray-500 border border-white/5">FPGA</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Research Card 2 -->
+        <div class="reveal-section tilt-card">
+          <div class="tilt-card-inner glass p-8 md:p-10">
+            <div class="flex items-start justify-between mb-6">
+              <span class="badge">ARCHER · Computers 2026</span>
+              <span class="text-xs text-gray-600 font-mono">Chapter 4</span>
+            </div>
+            <h3 class="text-xl md:text-2xl font-bold text-white mb-4 leading-snug">
+              Cycle-Accurate RISC-V Emulator for Side-Channel Research
+            </h3>
+            <p class="text-sm text-gray-400 leading-relaxed mb-6">
+              Boots Linux 6.6 in under three minutes. 3.7× faster than gem5. Matches Chipyard RTL to 9.4% mean deviation. Reproduces ten attacks and seven new defense policies.
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2 py-1 rounded-md text-[10px] font-mono bg-white/5 text-gray-500 border border-white/5">Spectre</span>
+              <span class="px-2 py-1 rounded-md text-[10px] font-mono bg-white/5 text-gray-500 border border-white/5">Meltdown</span>
+              <span class="px-2 py-1 rounded-md text-[10px] font-mono bg-white/5 text-gray-500 border border-white/5">cache timing</span>
+              <span class="px-2 py-1 rounded-md text-[10px] font-mono bg-white/5 text-gray-500 border border-white/5">MIT license</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Research Card 3 -->
+        <div class="reveal-section tilt-card">
+          <div class="tilt-card-inner glass p-8 md:p-10">
+            <div class="flex items-start justify-between mb-6">
+              <span class="badge">Novel SCA · Chips 2026</span>
+              <span class="text-xs text-gray-600 font-mono">Chapter 3</span>
+            </div>
+            <h3 class="text-xl md:text-2xl font-bold text-white mb-4 leading-snug">
+              23 Side Channels on Open RISC-V Cores
+            </h3>
+            <p class="text-sm text-gray-400 leading-relaxed mb-6">
+              Six novel RISC-V-specific primitives including PMPectre. Measured on six open cores from in-order to wide out-of-order. Confirmed on FPGA silicon with eight RTL mitigations costing ≤0.8% LUT area.
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2 py-1 rounded-md text-[10px] font-mono bg-white/5 text-gray-500 border border-white/5">PMPectre</span>
+              <span class="px-2 py-1 rounded-md text-[10px] font-mono bg-white/5 text-gray-500 border border-white/5">TVLA</span>
+              <span class="px-2 py-1 rounded-md text-[10px] font-mono bg-white/5 text-gray-500 border border-white/5">Zedboard FPGA</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Research Card 4 -->
+        <div class="reveal-section tilt-card">
+          <div class="tilt-card-inner glass p-8 md:p-10">
+            <div class="flex items-start justify-between mb-6">
+              <span class="badge">TWIG · IEEE ISED 2026</span>
+              <span class="text-xs text-gray-600 font-mono">Accepted</span>
+            </div>
+            <h3 class="text-xl md:text-2xl font-bold text-white mb-4 leading-snug">
+              Page-Table-Walker Cache Partitioning for Domain Isolation
+            </h3>
+            <p class="text-sm text-gray-400 leading-relaxed mb-6">
+              Shows RISC-V page-table walker caches leak across domains. TWIG drives displacement from 25/32 to at most 1, and classification to chance, for just 113 cells and no added SRAM.
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2 py-1 rounded-md text-[10px] font-mono bg-white/5 text-gray-500 border border-white/5">BOOM v4</span>
+              <span class="px-2 py-1 rounded-md text-[10px] font-mono bg-white/5 text-gray-500 border border-white/5">TLB</span>
+              <span class="px-2 py-1 rounded-md text-[10px] font-mono bg-white/5 text-gray-500 border border-white/5">partitioning</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════ -->
+  <!--       PUBLICATIONS SECTION          -->
+  <!-- ═══════════════════════════════════ -->
+  <section id="publications" class="relative py-32 md:py-48 px-6">
+    <div class="orb w-[400px] h-[400px] bg-cyan-500 bottom-0 left-20"></div>
+    <div class="max-w-5xl mx-auto">
+      <div class="reveal-section mb-20 text-center">
+        <div class="flex items-center justify-center gap-3 mb-4">
+          <div class="w-2 h-2 rounded-full bg-cyan-400 shadow-lg shadow-cyan-400/50"></div>
+          <span class="font-mono text-xs text-cyan-400 tracking-widest uppercase">Academic Output</span>
+        </div>
+        <h2 class="text-4xl md:text-6xl font-black text-white leading-tight mb-6">
+          Publications <span class="text-gray-600">&</span><br>
+          <span class="gradient-text">Intellectual Property</span>
+        </h2>
+        <p class="text-gray-500 max-w-2xl mx-auto">
+          A body of peer-reviewed work across IEEE, Springer, Scopus Q1 journals, and MDPI Open Access venues — from hardware security to malware analysis.
+        </p>
+      </div>
+
+      <!-- Rotating Windows / Stacked Cards -->
+      <div class="space-y-6">
+        <div class="reveal-section glass p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start" id="pubCard1">
+          <div class="shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 flex items-center justify-center border border-emerald-500/10">
+            <span class="text-2xl font-black font-mono text-emerald-400">23</span>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-white mb-2">Peer-Reviewed Research Papers</h3>
+            <p class="text-sm text-gray-400 leading-relaxed mb-3">Published across Chips, Computers, IEEE ISED, Springer LNNS (SmartCom), ACM APCC, and ICT4SD — covering RISC-V side channels, memory encryption, malware detection, and cache coherency.</p>
+            <div class="flex gap-3 flex-wrap">
+              <span class="text-xs text-emerald-400 font-mono">Scopus Q1</span>
+              <span class="text-xs text-gray-600">•</span>
+              <span class="text-xs text-cyan-400 font-mono">ESCI indexed</span>
+              <span class="text-xs text-gray-600">•</span>
+              <span class="text-xs text-purple-400 font-mono">Open Access (CC BY)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal-section glass p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start" id="pubCard2">
+          <div class="shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center border border-purple-500/10">
+            <span class="text-2xl font-black font-mono text-purple-400">6</span>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-white mb-2">Patent Applications (Indian Patent Office)</h3>
+            <p class="text-sm text-gray-400 leading-relaxed mb-3">Spanning AI-based edge devices for healthcare, distributed robotic systems, smart agriculture drones, blockchain attestation, and federated learning for network intrusion detection.</p>
+            <div class="flex gap-3 flex-wrap">
+              <span class="text-xs text-purple-400 font-mono">202441102159</span>
+              <span class="text-xs text-gray-600">→</span>
+              <span class="text-xs text-purple-400 font-mono">202441102164</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal-section glass p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start" id="pubCard3">
+          <div class="shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border border-amber-500/10">
+            <span class="text-2xl font-black font-mono text-amber-400">2</span>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-white mb-2">De Gruyter Brill Textbooks</h3>
+            <p class="text-sm text-gray-400 leading-relaxed mb-3">Full Stack Web Development with Remix (2024) and Mobile App Development with React Native (2025). Both published under De Gruyter's established academic catalogue.</p>
+            <div class="flex gap-3 flex-wrap">
+              <span class="text-xs text-amber-400 font-mono">ISBN 978-3-11-...</span>
+              <span class="text-xs text-gray-600">•</span>
+              <span class="text-xs text-orange-400 font-mono">De Gruyter Brill</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════ -->
+  <!--       EXPERIENCE TIMELINE           -->
+  <!-- ═══════════════════════════════════ -->
+  <section id="experience" class="relative py-32 md:py-48 px-6">
+    <div class="orb w-[500px] h-[500px] bg-purple-600 top-1/4 left-0"></div>
+    <div class="max-w-5xl mx-auto">
+      <div class="reveal-section mb-20 text-center">
+        <div class="flex items-center justify-center gap-3 mb-4">
+          <div class="w-2 h-2 rounded-full bg-purple-400 shadow-lg shadow-purple-400/50"></div>
+          <span class="font-mono text-xs text-purple-400 tracking-widest uppercase">Career Arc</span>
+        </div>
+        <h2 class="text-4xl md:text-6xl font-black text-white leading-tight">
+          16 Years of<br>
+          <span class="gradient-text">Building & Teaching</span>
+        </h2>
+      </div>
+
+      <div class="relative">
+        <!-- Timeline cards -->
+        <div class="space-y-8 md:space-y-12">
+          <!-- ENineHQ -->
+          <div class="reveal-section glass p-6 md:p-8 md:ml-auto md:w-2/3" id="expCard1">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="font-mono text-xs text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-full">2022 – Present</span>
+              <span class="text-xs text-gray-600">Bhubaneswar</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Co-founder & CEO</h3>
+            <p class="text-sm text-emerald-400/80 font-medium mb-3">ENineHQ Technologies Pvt. Ltd.</p>
+            <p class="text-sm text-gray-400 leading-relaxed">RISC-V silicon design, clinical healthcare software, and security research consultancy. Custom SoCs, FPGA prototypes, and open-instruction-set hardware security.</p>
+          </div>
+
+          <!-- KIIT -->
+          <div class="reveal-section glass p-6 md:p-8 md:mr-auto md:w-2/3" id="expCard2">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="font-mono text-xs text-cyan-400 bg-cyan-400/10 px-3 py-1 rounded-full">Sep 2020 – Present</span>
+              <span class="text-xs text-gray-600">Bhubaneswar</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Assistant Professor (Senior Scale)</h3>
+            <p class="text-sm text-cyan-400/80 font-medium mb-3">Kalinga Institute of Industrial Technology (KIIT)</p>
+            <p class="text-sm text-gray-400 leading-relaxed">Teaching computer architecture, operating systems, and programming. Research in hardware security, RISC-V, malware analysis and cryptography.</p>
+          </div>
+
+          <!-- Epic Systems -->
+          <div class="reveal-section glass p-6 md:p-8 md:ml-auto md:w-2/3" id="expCard3">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="font-mono text-xs text-amber-400 bg-amber-400/10 px-3 py-1 rounded-full">2015 – 2020</span>
+              <span class="text-xs text-gray-600">Madison, Wisconsin</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Software Developer → Team Lead</h3>
+            <p class="text-sm text-amber-400/80 font-medium mb-3">Epic Systems</p>
+            <p class="text-sm text-gray-400 leading-relaxed">Built Java backend for Epic's Rover mobile healthcare application. Led the team developing specialty software for international customers. Design reviews, code reviews, and people management.</p>
+          </div>
+
+          <!-- Oracle -->
+          <div class="reveal-section glass p-6 md:p-8 md:mr-auto md:w-2/3" id="expCard4">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="font-mono text-xs text-red-400 bg-red-400/10 px-3 py-1 rounded-full">2010 – 2014</span>
+              <span class="text-xs text-gray-600">Bangalore</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Senior Member of Technical Staff</h3>
+            <p class="text-sm text-red-400/80 font-medium mb-3">Oracle</p>
+            <p class="text-sm text-gray-400 leading-relaxed">Oracle Web Services Manager and Oracle Entitlements Server. Securing enterprise SOAP web services across WebLogic, JBoss and WebSphere. Promoted to Senior MTS.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════ -->
+  <!--         EDUCATION SECTION           -->
+  <!-- ═══════════════════════════════════ -->
+  <section id="education" class="relative py-32 md:py-48 px-6">
+    <div class="orb w-[400px] h-[400px] bg-pink-600 top-20 right-10"></div>
+    <div class="max-w-5xl mx-auto">
+      <div class="reveal-section mb-16 text-center">
+        <div class="flex items-center justify-center gap-3 mb-4">
+          <div class="w-2 h-2 rounded-full bg-pink-400 shadow-lg shadow-pink-400/50"></div>
+          <span class="font-mono text-xs text-pink-400 tracking-widest uppercase">Education</span>
+        </div>
+        <h2 class="text-4xl md:text-6xl font-black text-white leading-tight">
+          Academic <span class="gradient-text">Foundation</span>
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="reveal-section glass p-8 text-center group">
+          <div class="text-4xl mb-4">🎓</div>
+          <h3 class="font-bold text-white text-lg mb-2">PhD Computer Science</h3>
+          <p class="text-emerald-400 text-sm font-medium mb-2">BITS Pilani</p>
+          <p class="text-xs text-gray-500 mb-3">2021 – 2026</p>
+          <p class="text-xs text-gray-400 leading-relaxed">Thesis: Side-channel security of open-source RISC-V processors. 16 publications, 6 patents, 2 textbooks during the doctorate.</p>
+        </div>
+
+        <div class="reveal-section glass p-8 text-center group">
+          <div class="text-4xl mb-4">🧠</div>
+          <h3 class="font-bold text-white text-lg mb-2">MS Computer Science</h3>
+          <p class="text-cyan-400 text-sm font-medium mb-2">UW-Madison</p>
+          <p class="text-xs text-gray-500 mb-3">2014 – 2016 · GPA 3.9/4.0</p>
+          <p class="text-xs text-gray-400 leading-relaxed">Systems concentration. Fully funded via teaching assistantship. TA for Introduction to Operating Systems.</p>
+        </div>
+
+        <div class="reveal-section glass p-8 text-center group">
+          <div class="text-4xl mb-4">⚡</div>
+          <h3 class="font-bold text-white text-lg mb-2">BE (Hons.) CS</h3>
+          <p class="text-amber-400 text-sm font-medium mb-2">BITS Pilani</p>
+          <p class="text-xs text-gray-500 mb-3">2006 – 2010 · CGPA 9.53/10</p>
+          <p class="text-xs text-gray-400 leading-relaxed">Perfect 10.0 first year. Course topper in 6 courses. BARC and Yahoo! Labs internships.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════ -->
+  <!--          CONTACT SECTION            -->
+  <!-- ═══════════════════════════════════ -->
+  <section id="contact" class="relative py-32 md:py-48 px-6">
+    <div class="orb w-[600px] h-[600px] bg-emerald-600 bottom-0 left-1/2 -translate-x-1/2"></div>
+    <div class="max-w-3xl mx-auto text-center">
+      <div class="reveal-section">
+        <div class="flex items-center justify-center gap-3 mb-4">
+          <div class="w-2 h-2 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/50"></div>
+          <span class="font-mono text-xs text-emerald-400 tracking-widest uppercase">Get in Touch</span>
+        </div>
+        <h2 class="text-4xl md:text-6xl font-black text-white leading-tight mb-8">
+          Let's <span class="gradient-text">Collaborate</span>
+        </h2>
+        <p class="text-gray-400 mb-12 max-w-xl mx-auto">
+          Whether it's about RISC-V hardware security research, academic collaboration, speaking, or consulting — I'd love to hear from you.
+        </p>
+
+        <div class="grid sm:grid-cols-2 gap-4 max-w-lg mx-auto">
+          <a href="mailto:mail@jyotiprakash.org" class="glass p-6 group cursor-pointer text-center">
+            <div class="text-2xl mb-3">✉️</div>
+            <div class="text-sm font-medium text-white group-hover:text-emerald-400 transition-colors">mail@jyotiprakash.org</div>
+            <div class="text-xs text-gray-600 mt-1">Email</div>
+          </a>
+          <a href="https://scholar.google.com/citations?user=sE2dRWIAAAAJ" target="_blank" rel="noopener" class="glass p-6 group cursor-pointer text-center">
+            <div class="text-2xl mb-3">📚</div>
+            <div class="text-sm font-medium text-white group-hover:text-cyan-400 transition-colors">Google Scholar</div>
+            <div class="text-xs text-gray-600 mt-1">Citations & Papers</div>
+          </a>
+          <a href="https://github.com/ShowMeTheStack" target="_blank" rel="noopener" class="glass p-6 group cursor-pointer text-center">
+            <div class="text-2xl mb-3">💻</div>
+            <div class="text-sm font-medium text-white group-hover:text-purple-400 transition-colors">GitHub</div>
+            <div class="text-xs text-gray-600 mt-1">Open Source</div>
+          </a>
+          <a href="https://www.linkedin.com/in/mishrajp88/" target="_blank" rel="noopener" class="glass p-6 group cursor-pointer text-center">
+            <div class="text-2xl mb-3">🔗</div>
+            <div class="text-sm font-medium text-white group-hover:text-amber-400 transition-colors">LinkedIn</div>
+            <div class="text-xs text-gray-600 mt-1">Professional Network</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ───── Footer ───── -->
+  <footer class="relative py-16 px-6 border-t border-white/5">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center font-mono font-extrabold text-[10px] text-black">JM</div>
+        <span class="text-sm text-gray-600">© 2026 Jyotiprakash Mishra</span>
+      </div>
+      <div class="flex gap-6">
+        <a href="https://jyotiprakash.org" class="link-hover text-xs text-gray-500 hover:text-white transition-colors">Main Portfolio</a>
+        <a href="https://blog.jyotiprakash.org" class="link-hover text-xs text-gray-500 hover:text-white transition-colors">Blog</a>
+        <a href="https://eninehq.com" class="link-hover text-xs text-gray-500 hover:text-white transition-colors">ENineHQ</a>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- /scrollContent -->
+
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--                    JAVASCRIPT: Three.js + GSAP                     -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  // ════════════════════════════════════
+  //  THREE.JS COSMIC PARTICLE UNIVERSE
+  // ════════════════════════════════════
+  const canvas = document.getElementById('cosmicCanvas');
+  const isReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let renderer, scene, camera, clock;
+  let dustParticles, ringMesh, torusMesh, innerTorusMesh;
+  const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+  let isRunning = true;
+
+  function hasWebGL() {
+    try {
+      const c = document.createElement('canvas');
+      return !!(window.WebGLRenderingContext && (c.getContext('webgl') || c.getContext('experimental-webgl')));
+    } catch (e) { return false; }
+  }
+
+  function initThree() {
+    if (!hasWebGL() || typeof THREE === 'undefined') {
+      canvas.style.display = 'none';
+      return;
+    }
+
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(60, W / H, 1, 5000);
+    camera.position.z = 1200;
+
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(W, H);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+    clock = new THREE.Clock();
+
+    // ── Lighting ──
+    scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+
+    const light1 = new THREE.PointLight(0x39ff7a, 3.0, 2500);
+    light1.position.set(400, 500, 400);
+    scene.add(light1);
+
+    const light2 = new THREE.PointLight(0x7928ca, 2.5, 2500);
+    light2.position.set(-500, -300, 300);
+    scene.add(light2);
+
+    const light3 = new THREE.PointLight(0x00f0ff, 1.5, 2000);
+    light3.position.set(0, 0, 600);
+    scene.add(light3);
+
+    // ── Cosmic Dust Particles ──
+    const PARTICLE_COUNT = isReducedMotion ? 200 : 1800;
+    const dustGeo = new THREE.BufferGeometry();
+    const positions = new Float32Array(PARTICLE_COUNT * 3);
+    const colors = new Float32Array(PARTICLE_COUNT * 3);
+    const sizes = new Float32Array(PARTICLE_COUNT);
+
+    const palette = [
+      new THREE.Color(0x39ff7a),
+      new THREE.Color(0x00f0ff),
+      new THREE.Color(0xb48ad8),
+      new THREE.Color(0xff2bd6),
+      new THREE.Color(0xffffff),
+    ];
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      positions[i * 3]     = (Math.random() - 0.5) * 3600;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 2800;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 2400;
+
+      const c = palette[Math.floor(Math.random() * palette.length)];
+      colors[i * 3]     = c.r;
+      colors[i * 3 + 1] = c.g;
+      colors[i * 3 + 2] = c.b;
+
+      sizes[i] = Math.random() * 4 + 1;
+    }
+
+    dustGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    dustGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    const dustMat = new THREE.PointsMaterial({
+      size: 2.8,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.65,
+      blending: THREE.AdditiveBlending,
+      sizeAttenuation: true,
+    });
+
+    dustParticles = new THREE.Points(dustGeo, dustMat);
+    scene.add(dustParticles);
+
+    // ── Central 3D Geometric Ring / Torus Knot ──
+    const torusKnotGeo = new THREE.TorusKnotGeometry(220, 6, 256, 32, 2, 3);
+    const torusKnotMat = new THREE.MeshBasicMaterial({
+      color: 0x39ff7a,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.08,
+    });
+    ringMesh = new THREE.Mesh(torusKnotGeo, torusKnotMat);
+    ringMesh.position.set(0, -30, -300);
+    scene.add(ringMesh);
+
+    // ── Outer Torus ──
+    const torusGeo = new THREE.TorusGeometry(360, 2, 24, 160);
+    const torusMat = new THREE.MeshBasicMaterial({
+      color: 0x00f0ff,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.06,
+    });
+    torusMesh = new THREE.Mesh(torusGeo, torusMat);
+    torusMesh.position.set(0, -30, -300);
+    torusMesh.rotation.x = Math.PI / 4;
+    scene.add(torusMesh);
+
+    // ── Inner Icosahedron ──
+    const icoGeo = new THREE.IcosahedronGeometry(120, 1);
+    const icoMat = new THREE.MeshBasicMaterial({
+      color: 0xb48ad8,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.05,
+    });
+    innerTorusMesh = new THREE.Mesh(icoGeo, icoMat);
+    innerTorusMesh.position.set(0, -30, -300);
+    scene.add(innerTorusMesh);
+
+    // ── Events ──
+    window.addEventListener('mousemove', (e) => {
+      mouse.tx = (e.clientX / window.innerWidth  - 0.5) * 2;
+      mouse.ty = -(e.clientY / window.innerHeight - 0.5) * 2;
+    });
+
+    window.addEventListener('resize', () => {
+      if (!renderer || !camera) return;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      isRunning = !document.hidden;
+    });
+
+    animate();
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (!isRunning || !renderer) return;
+
+    const elapsed = clock.getElapsedTime();
+
+    // Smooth parallax
+    mouse.x += (mouse.tx - mouse.x) * 0.035;
+    mouse.y += (mouse.ty - mouse.y) * 0.035;
+
+    camera.position.x = mouse.x * 80;
+    camera.position.y = mouse.y * 50;
+    camera.lookAt(0, 0, 0);
+
+    if (!isReducedMotion) {
+      if (dustParticles) {
+        dustParticles.rotation.y = elapsed * 0.012;
+        dustParticles.rotation.x = elapsed * 0.006;
+      }
+      if (ringMesh) {
+        ringMesh.rotation.y = elapsed * 0.06;
+        ringMesh.rotation.x = elapsed * 0.03;
+        ringMesh.rotation.z = elapsed * 0.015;
+      }
+      if (torusMesh) {
+        torusMesh.rotation.z = -elapsed * 0.04;
+        torusMesh.rotation.y = elapsed * 0.025;
+      }
+      if (innerTorusMesh) {
+        innerTorusMesh.rotation.x = -elapsed * 0.05;
+        innerTorusMesh.rotation.y = elapsed * 0.07;
+      }
+    }
+
+    renderer.render(scene, camera);
+  }
+
+
+  // ════════════════════════════════════
+  //  GSAP ScrollTrigger — Anti-Gravity
+  // ════════════════════════════════════
+  function initGSAP() {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ── Nav Background on Scroll ──
+    ScrollTrigger.create({
+      start: 'top -80',
+      onEnter: () => {
+        document.getElementById('mainNav').style.background = 'rgba(5,5,5,0.85)';
+        document.getElementById('mainNav').style.backdropFilter = 'blur(20px)';
+        document.getElementById('mainNav').style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+      },
+      onLeaveBack: () => {
+        document.getElementById('mainNav').style.background = 'transparent';
+        document.getElementById('mainNav').style.backdropFilter = 'none';
+        document.getElementById('mainNav').style.borderBottom = 'none';
+      },
+    });
+
+    // ── Hero Entrance ──
+    const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    heroTl
+      .from('#heroBadge', { y: 30, opacity: 0, duration: 0.8, delay: 0.3 })
+      .from('#heroTitle', { y: 60, opacity: 0, duration: 1 }, '-=0.5')
+      .from('#heroSub', { y: 40, opacity: 0, duration: 0.8 }, '-=0.6')
+      .from('#heroTerminal', { y: 50, opacity: 0, scale: 0.95, duration: 0.9 }, '-=0.5')
+      .from('#statsRow > div', { y: 30, opacity: 0, stagger: 0.12, duration: 0.6 }, '-=0.4');
+
+    // ── Counter Animation ──
+    document.querySelectorAll('.stat-num[data-count]').forEach(el => {
+      const target = parseInt(el.dataset.count, 10);
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 85%',
+        once: true,
+        onEnter: () => {
+          gsap.to({ val: 0 }, {
+            val: target,
+            duration: 2,
+            ease: 'power2.out',
+            onUpdate: function () {
+              el.textContent = Math.round(this.targets()[0].val);
+            },
+          });
+        },
+      });
+    });
+
+    // ── Reveal Sections with Anti-Gravity Float ──
+    document.querySelectorAll('.reveal-section').forEach((el, i) => {
+      gsap.to(el, {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 88%',
+          toggleActions: 'play none none none',
+        },
+      });
+    });
+
+    // ── Anti-Gravity Floating on Research Cards ──
+    document.querySelectorAll('.tilt-card').forEach((card, i) => {
+      gsap.to(card, {
+        y: -20 - (i % 3) * 10,
+        scrollTrigger: {
+          trigger: card,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1.5,
+        },
+      });
+    });
+
+    // ── Publication Cards: Rotating Windows Tilt ──
+    ['#pubCard1', '#pubCard2', '#pubCard3'].forEach((sel, i) => {
+      const direction = i % 2 === 0 ? 1 : -1;
+      gsap.fromTo(sel, {
+        rotateY: direction * 6,
+        rotateX: 3,
+        scale: 0.96,
+      }, {
+        rotateY: 0,
+        rotateX: 0,
+        scale: 1,
+        scrollTrigger: {
+          trigger: sel,
+          start: 'top 90%',
+          end: 'top 40%',
+          scrub: 1,
+        },
+      });
+    });
+
+    // ── Experience Cards: Stagger from Alternating Sides ──
+    ['#expCard1', '#expCard2', '#expCard3', '#expCard4'].forEach((sel, i) => {
+      const xOffset = i % 2 === 0 ? 80 : -80;
+      gsap.from(sel, {
+        x: xOffset,
+        opacity: 0,
+        rotateY: i % 2 === 0 ? 5 : -5,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: sel,
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+        },
+      });
+    });
+
+    // ── Parallax Orbs ──
+    document.querySelectorAll('.orb').forEach(orb => {
+      gsap.to(orb, {
+        y: -100,
+        scrollTrigger: {
+          trigger: orb.parentElement,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 2,
+        },
+      });
+    });
+  }
+
+
+  // ════════════════════════════════════
+  //  3D Card Tilt on Hover
+  // ════════════════════════════════════
+  function initTiltCards() {
+    document.querySelectorAll('.tilt-card').forEach(container => {
+      const inner = container.querySelector('.tilt-card-inner');
+      if (!inner) return;
+
+      container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width  - 0.5;
+        const y = (e.clientY - rect.top)  / rect.height - 0.5;
+        inner.style.transform = `rotateY(${x * 12}deg) rotateX(${-y * 12}deg) translateZ(10px)`;
+      });
+
+      container.addEventListener('mouseleave', () => {
+        inner.style.transform = 'rotateY(0deg) rotateX(0deg) translateZ(0px)';
+      });
+    });
+  }
+
+
+  // ════════════════════════════════════
+  //  Smooth Scroll for Anchor Links
+  // ════════════════════════════════════
+  function initSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', (e) => {
+        const href = anchor.getAttribute('href');
+        if (href === '#') return;
+        const target = document.querySelector(href);
+        if (!target) return;
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+
+
+  // ════════════════════════════════════
+  //  Bootstrap
+  // ════════════════════════════════════
+  function boot() {
+    initThree();
+    initGSAP();
+    initTiltCards();
+    initSmoothScroll();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
+</script>
+
+<noscript>
+  <div style="padding:24px;font:16px/1.6 system-ui;color:#39ff7a;background:#050505">
+    Jyotiprakash Mishra — Hardware security researcher, Assistant Professor at KIIT, PhD candidate at BITS Pilani.
+    This immersive experience requires JavaScript. Contact: <a href="mailto:mail@jyotiprakash.org" style="color:#00f0ff">mail@jyotiprakash.org</a>
+  </div>
+</noscript>
+</body>
+</html>
