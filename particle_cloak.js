@@ -1,30 +1,18 @@
 /**
- * Particle-Cloak Intro Experience
+ * Particle-Cloak Cinematic Intro Experience
  * Native HTML Canvas 2D Particle Veil & Spring Dynamics
  * For Professor Jyotiprakash Mishra's Academic Portfolio
- *
- * Exact Specifications:
- * - Device-pixel-ratio-aware Canvas 2D rendering (capped at 2)
- * - Grid generation: step = Math.max(9, Math.min(width, height) / 22)
- * - Raw and eased pointer smoothing: pointer.x += (target.x - pointer.x) * 0.16
- * - Interaction radius: R = 0.34 * Math.min(width, height)
- * - Force: f = Math.pow(1 - d / R, 2) * 3.4 (outward push along normalized vector)
- * - Spring force: vx += (homeX - x) * 0.024, vy += (homeY - y) * 0.024
- * - Damping: vx *= 0.86, vy *= 0.86
- * - Integration: x += vx, y += vy
- * - Alpha: alpha = Math.max(0, 0.72 - distanceFromHome / 70)
- * - Autonomous Lissajous trajectory before pointer interaction
- * - Smooth particle disperse + dissolve transition on "Enter Portfolio" click
  */
 
 (function () {
   'use strict';
 
-  // Palette constants
+  // Palette: Ivory, Pale Cyan, Muted Blue-Gray, Occasional Violet
   const COLOR_PALETTE = [
-    { r: 243, g: 240, b: 232, weight: 0.65 }, // Warm ivory
-    { r: 115, g: 217, b: 245, weight: 0.25 }, // Electric cyan
-    { r: 160, g: 169, b: 188, weight: 0.10 }  // Muted blue-gray
+    { r: 243, g: 240, b: 232, weight: 0.55 }, // Warm ivory #F3F0E8
+    { r: 115, g: 217, b: 245, weight: 0.25 }, // Electric cyan #73D9F5
+    { r: 160, g: 169, b: 188, weight: 0.12 }, // Muted blue-gray #A0A9BC
+    { r: 152, g: 101, b: 255, weight: 0.08 }  // Subtle violet #9865FF
   ];
 
   class ParticleCloakIntro {
@@ -34,13 +22,11 @@
       this.enterBtn = document.getElementById('cloakEnterBtn');
 
       if (!this.introEl || !this.canvas) {
-        console.warn('[ParticleCloak] Required DOM elements not found.');
         return;
       }
 
       this.ctx = this.canvas.getContext('2d');
       if (!this.ctx) {
-        console.warn('[ParticleCloak] 2D Context not supported.');
         this.fallback();
         return;
       }
@@ -48,6 +34,7 @@
       // State flags
       this.isEntering = false;
       this.isDissolving = false;
+      this.isCompleted = false;
       this.dissolveStartTime = 0;
       this.dissolveDuration = 750; // ms
       this.userInteracted = false;
@@ -72,7 +59,7 @@
       const forceIntro = urlParams.has('intro') || urlParams.get('replay') === '1';
       let hasSeenIntro = false;
       try {
-        hasSeenIntro = sessionStorage.getItem('jpm_intro_seen') === '1';
+        hasSeenIntro = sessionStorage.getItem('jpm_intro_seen') === '1' || sessionStorage.getItem('jp.intro') === '1';
       } catch (e) {
         hasSeenIntro = false;
       }
@@ -89,22 +76,102 @@
     }
 
     init() {
-      document.body.classList.add('cloak-active');
-      this.introEl.style.display = 'flex';
-      this.introEl.classList.remove('intro-fade-out');
+      this.isCompleted = false;
       this.isEntering = false;
       this.isDissolving = false;
+      this.userInteracted = false;
+      this.isPointerInside = false;
+
+      document.body.classList.add('cloak-active');
+      this.introEl.style.display = 'flex';
+      this.introEl.style.opacity = '1';
+      this.introEl.style.visibility = 'visible';
+      this.introEl.removeAttribute('aria-hidden');
+      this.introEl.classList.remove('intro-fade-out');
 
       // Reduced motion check
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reducedMotion) {
         this.canvas.style.display = 'none';
         this.bindEvents();
+        if (this.enterBtn) {
+          this.enterBtn.style.pointerEvents = 'auto';
+          this.enterBtn.focus();
+        }
         return;
       }
 
       this.resize();
       this.bindEvents();
       this.startLoop();
+      this.playEntranceAnimation();
+    }
+
+    playEntranceAnimation() {
+      const eyebrow = this.introEl.querySelector('.cloak-eyebrow');
+      const nameEl = this.introEl.querySelector('.cloak-name');
+      const headline = this.introEl.querySelector('.cloak-headline');
+      const caption = this.introEl.querySelector('.cloak-caption');
+      const supporting = this.introEl.querySelector('.cloak-supporting');
+      const corners = this.introEl.querySelectorAll('.cloak-corner-badge');
+      const btnWrap = this.introEl.querySelector('.cloak-btn-wrap');
+
+      if (this.enterBtn) {
+        this.enterBtn.style.pointerEvents = 'none'; // Prevent premature click while animating in
+      }
+
+      if (window.gsap) {
+        const tl = window.gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+        // 1. Background & canvas veil materialization
+        tl.fromTo(this.canvas, { opacity: 0 }, { opacity: 1, duration: 1.1, ease: 'power2.out' }, 0);
+
+        // 2. Eyebrow and name
+        if (eyebrow) {
+          tl.fromTo(eyebrow, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.8 }, 0.2);
+        }
+        if (nameEl) {
+          tl.fromTo(nameEl, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.8 }, 0.35);
+        }
+
+        // 3. Main headline with elegant reveal
+        if (headline) {
+          tl.fromTo(headline, { opacity: 0, y: 24, scale: 0.985 }, { opacity: 1, y: 0, scale: 1, duration: 1.05, ease: 'power2.out' }, 0.55);
+        }
+
+        // 4. Supporting caption & description
+        if (caption) {
+          tl.fromTo(caption, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.75 }, 0.8);
+        }
+        if (supporting) {
+          tl.fromTo(supporting, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.75 }, 0.95);
+        }
+
+        // 5. Corner badges
+        if (corners && corners.length) {
+          tl.fromTo(corners, { opacity: 0 }, { opacity: 0.4, duration: 0.9, stagger: 0.08 }, 0.9);
+        }
+
+        // 6. Enter button reveals last and becomes interactive
+        if (btnWrap) {
+          tl.fromTo(btnWrap, { opacity: 0, y: 18, scale: 0.95 }, {
+            opacity: 1, y: 0, scale: 1, duration: 0.75, ease: 'back.out(1.4)',
+            onComplete: () => {
+              if (this.enterBtn) {
+                this.enterBtn.style.pointerEvents = 'auto';
+                this.enterBtn.focus();
+              }
+            }
+          }, 1.15);
+        }
+      } else {
+        // Fallback if GSAP is not available
+        this.canvas.style.opacity = '1';
+        if (this.enterBtn) {
+          this.enterBtn.style.pointerEvents = 'auto';
+          this.enterBtn.focus();
+        }
+      }
     }
 
     resize() {
@@ -117,7 +184,11 @@
       this.canvas.style.width = this.width + 'px';
       this.canvas.style.height = this.height + 'px';
 
-      this.ctx.resetTransform?.();
+      if (this.ctx.resetTransform) {
+        this.ctx.resetTransform();
+      } else {
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+      }
       this.ctx.scale(this.dpr, this.dpr);
 
       this.generateParticles();
@@ -143,14 +214,20 @@
           // Radius between 1.0 and 2.6 pixels
           const radius = 1.0 + Math.random() * 1.6;
 
-          // Palette selection
+          // Palette selection with weighted probabilities
           const roll = Math.random();
           let color = COLOR_PALETTE[0];
-          if (roll < COLOR_PALETTE[1].weight) {
-            color = COLOR_PALETTE[1];
-          } else if (roll < COLOR_PALETTE[1].weight + COLOR_PALETTE[2].weight) {
-            color = COLOR_PALETTE[2];
+          let cumulative = 0;
+          for (let p = 0; p < COLOR_PALETTE.length; p++) {
+            cumulative += COLOR_PALETTE[p].weight;
+            if (roll < cumulative) {
+              color = COLOR_PALETTE[p];
+              break;
+            }
           }
+
+          // Subtle base opacity variation for depth
+          const baseAlpha = 0.52 + Math.random() * 0.38;
 
           this.particles.push({
             homeX,
@@ -162,7 +239,8 @@
             radius,
             r: color.r,
             g: color.g,
-            b: color.b
+            b: color.b,
+            baseAlpha
           });
         }
       }
@@ -223,6 +301,16 @@
         this.enterPortfolio();
       };
 
+      this.onKeyDown = (e) => {
+        if (this.introEl && this.introEl.style.display !== 'none' && !this.isCompleted) {
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            this.enterPortfolio();
+          }
+        }
+      };
+      window.addEventListener('keydown', this.onKeyDown);
+
       if (this.enterBtn) {
         this.enterBtn.addEventListener('click', this.onEnterClick);
         this.enterBtn.addEventListener('keydown', (e) => {
@@ -236,6 +324,7 @@
 
     unbindEvents() {
       window.removeEventListener('resize', this.onResize);
+      window.removeEventListener('keydown', this.onKeyDown);
       if (this.introEl) {
         this.introEl.removeEventListener('pointermove', this.onPointerMove);
         this.introEl.removeEventListener('pointerenter', this.onPointerEnter);
@@ -303,7 +392,7 @@
         const dy = p.y - py;
         const d = Math.hypot(dx, dy);
 
-        // Interaction push
+        // Interaction push away from pointer
         if (d < R && d > 0.0001) {
           // f = Math.pow(1 - d / R, 2) * 3.4
           const f = Math.pow(1 - d / R, 2) * 3.4;
@@ -346,11 +435,11 @@
         const p = this.particles[i];
 
         // Fade particles according to their displacement from home:
-        // alpha = Math.max(0, 0.72 - distanceFromHome / 70)
+        // alpha = Math.max(0, baseAlpha - distanceFromHome / 70)
         const dx = p.x - p.homeX;
         const dy = p.y - p.homeY;
         const distanceFromHome = Math.hypot(dx, dy);
-        let alpha = Math.max(0, 0.72 - distanceFromHome / 70);
+        let alpha = Math.max(0, p.baseAlpha - distanceFromHome / 70);
 
         if (this.isDissolving) {
           alpha *= dissolveFactor;
@@ -374,6 +463,7 @@
       // Remember session preference so subsequent visits bypass intro cleanly
       try {
         sessionStorage.setItem('jpm_intro_seen', '1');
+        sessionStorage.setItem('jp.intro', '1');
       } catch (err) {}
 
       // Disperse particles outward with impulse
@@ -382,18 +472,29 @@
       const len = this.particles.length;
       for (let i = 0; i < len; i++) {
         const p = this.particles[i];
-        const angle = Math.atan2(p.y - cy, p.x - cx) + (Math.random() - 0.5) * 0.4;
-        const speed = 5 + Math.random() * 10;
+        const angle = Math.atan2(p.y - cy, p.x - cx) + (Math.random() - 0.5) * 0.5;
+        const speed = 7 + Math.random() * 14;
         p.vx += Math.cos(angle) * speed;
         p.vy += Math.sin(angle) * speed;
       }
 
-      // Smooth CSS transition to fade out intro overlay
-      this.introEl.classList.add('intro-fade-out');
-
-      setTimeout(() => {
-        this.bypassIntro();
-      }, this.dissolveDuration);
+      // Smooth transition to fade out intro overlay
+      if (window.gsap) {
+        window.gsap.to(this.introEl, {
+          opacity: 0,
+          scale: 1.025,
+          duration: 0.75,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            this.bypassIntro();
+          }
+        });
+      } else {
+        this.introEl.classList.add('intro-fade-out');
+        setTimeout(() => {
+          this.bypassIntro();
+        }, this.dissolveDuration);
+      }
     }
 
     bypassIntro() {
@@ -407,16 +508,18 @@
       if (this.introEl) {
         this.introEl.style.display = 'none';
         this.introEl.classList.remove('intro-fade-out');
+        this.introEl.setAttribute('aria-hidden', 'true');
       }
       document.body.classList.remove('cloak-active');
 
-      // Dispatch resize event so Three.js cosmic canvas and Rolodex Ring calibrate accurately
+      // Dispatch resize event so Three.js cosmic canvas and ScrollTrigger calibrate accurately
       window.dispatchEvent(new Event('resize'));
     }
 
     fallback() {
       this.canvas.style.display = 'none';
       if (this.enterBtn) {
+        this.enterBtn.style.pointerEvents = 'auto';
         this.enterBtn.addEventListener('click', () => this.bypassIntro());
       }
     }
@@ -427,9 +530,6 @@
         replayBtn.__wired = true;
         replayBtn.addEventListener('click', (e) => {
           e.preventDefault();
-          this.isCompleted = false;
-          this.userInteracted = false;
-          this.isPointerInside = false;
           this.init();
         });
       }
